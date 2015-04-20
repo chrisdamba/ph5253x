@@ -1,38 +1,34 @@
-# p-values are random variables.
-# 
-# Note that just like the sample average is a random variable because it is
-# based on a random sample, p-values are based on random variables (sample mean,
-# sample standard deviation) so they are also a random variable.
+library(dplyr)
+library(magrittr)
 
-set.seed(1)
-url = "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/femaleControlsPopulation.csv"
-filename = "femaleControlsPopulation.csv"
-if (!file.exists(filename)) download.file(url,destfile=filename, method="curl")
-population = read.csv(filename)
-pvals <- replicate(1000,{
-  control = sample(population[,1],12)
-  treatment = sample(population[,1],12)
-  t.test(treatment,control)$p.val
-})
-head(pvals)
-hist(pvals)
+# library(devtools)
+# install_github("genomicsclass/GSE5859Subset")
 
-mean(pvals < 0.05)
-mean(pvals < 0.01)
+library(GSE5859Subset)
+data(GSE5859Subset)
 
-###############################################################################
+# How many samples where processed on 2005-06-27?
+sampleInfo %>%
+  filter(date == "2005-06-27") %>%
+  summarise(N = n()) %>%
+  print
 
-set.seed(100)
+# How many of the genes represented in this particular technology are on chromosome Y?
+geneAnnotation %>%
+  filter(CHR == "chrY") %>%
+  summarise(N = n()) %>%
+  print
 
-signif.pvalues = replicate(1000, (function(){
-  pvals = replicate(20, (function(){
-    cases = rnorm(10,30,2)
-    controls = rnorm(10,30,2)
-    t.test(cases,controls)$p.val
-  })())
-  sum(pvals < 0.05)  
-})())
+# What is the log expression value of the for gene ARPC1A on the one subject
+# that we measured on 2005-06-10?
+filename = sampleInfo %>%
+  filter(date == "2005-06-10") %$% filename
 
-mean(signif.pvalues)
+probeid = geneAnnotation %>%
+  filter(SYMBOL == "ARPC1A") %$% PROBEID
 
-sum(signif.pvalues > 0)/1000
+as.data.frame(geneExpression) %>%
+  add_rownames() %>%
+  filter(rowname == probeid) %>%
+  select(rowname, contains(filename)) %>%
+  print
