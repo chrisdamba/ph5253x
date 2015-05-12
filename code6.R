@@ -1,5 +1,3 @@
-library(ggplot2)
-
 # library(devtools)
 # install_github("genomicsclass/tissuesGeneExpression")
 
@@ -17,6 +15,7 @@ dim(mat)
 
 
 ###############################################################################
+library(ggplot2)
 
 s = svd(mat - rowMeans(mat))
 
