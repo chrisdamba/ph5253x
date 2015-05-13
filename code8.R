@@ -12,10 +12,8 @@ image(e[1:100,])
 # or
 # only the genes that vary a lot
 
-library(genefilter)
-
-rv = rowVars(e)
-idx = order(-rv)[1:100]
+rvs = rowVars(e)
+idx = order(-rvs)[1:100]
 
 heatmap(e[idx,])
 
@@ -23,3 +21,18 @@ library(RColorBrewer)
 hmcol = colorRampPalette(brewer.pal(9, "GnBu"))(100)
 
 heatmap(e[idx,], col=hmcol)
+
+###############################################################################
+
+library(gplots)
+library(rafalib)
+
+cols = palette(brewer.pal(7, "Dark2"))[as.fumeric(tissue)]
+
+cbind(colnames(e), tissue, cols)
+
+heatmap.2(e[idx,],
+          labCol=tissue,
+          trace='none',
+          ColSideColors=cols,
+          col=hmcol)

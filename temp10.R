@@ -10,8 +10,8 @@ km = kmeans(t(geneExpression), centers=5)
 library(lubridate)
 
 table(group=sampleInfo$group, cluster=km$cluster)
-table(group=sampleInfo$date, cluster=km$cluster)
-table(group=year(sampleInfo$date), cluster=km$cluster)
+table(date=sampleInfo$date, cluster=km$cluster)
+table(year=year(sampleInfo$date), cluster=km$cluster)
 
 d = dist(t(geneExpression))
 mds = cmdscale(d)
